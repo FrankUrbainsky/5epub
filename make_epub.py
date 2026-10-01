@@ -837,6 +837,17 @@ def build_epub(
     cache_dir = image_cache_dir or (Path.cwd() / "image-cache")
     image_cache: ImageCache | None = None
 
+    # Determine cover image: prefer explicit cover from adventures.json metadata
+    cover_meta = meta.get("cover")
+    cover_cdn_path = ""
+    if isinstance(cover_meta, dict):
+        cover_cdn_path = cover_meta.get("path", "")
+    elif isinstance(cover_meta, str):
+        cover_cdn_path = cover_meta
+
+    if not cover_cdn_path:
+        cover_cdn_path = _find_cover_path(chapters)
+
     if not no_images:
         image_cache = ImageCache(
             cache_dir=cache_dir,
@@ -846,6 +857,8 @@ def build_epub(
             workers=workers,
         )
         all_paths = collect_image_paths(chapters)
+        if cover_cdn_path and cover_cdn_path not in all_paths:
+            all_paths.insert(0, cover_cdn_path)
         print(f"  Images: {len(all_paths)} unique path(s)  "
               f"[cache: {cache_dir}]")
         image_cache.prefetch(all_paths)
@@ -915,7 +928,6 @@ def build_epub(
     book.add_item(css_item)
 
     # ---- Cover image + cover page -------------------------------------------
-    cover_cdn_path = _find_cover_path(chapters)
     cover_file_name: str = ""
     spine = ["nav"]
     toc   = []

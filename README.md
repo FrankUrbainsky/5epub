@@ -67,6 +67,22 @@ curl -L -o "NodestoCapsCondensed-Bold.otf" \
 
 ## Quick Start
 
+### 1. Interactive Book Search & Creator (Recommended)
+
+Search all official adventures from `adventures.json` by name, code, or storyline, see cover images and build status, and select books to generate:
+
+```bash
+python3 search_books.py
+```
+
+Search directly from the CLI:
+```bash
+python3 search_books.py "curse of strahd"
+python3 search_books.py --create CoS
+```
+
+### 2. Direct Build
+
 Generate an EPUB from *Waterdeep: Dragon Heist*:
 
 ```bash
